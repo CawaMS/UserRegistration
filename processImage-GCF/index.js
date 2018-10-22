@@ -27,7 +27,7 @@ exports.imagePubSub = (data, context) => {
     return;
   }
 
-  console.log(`going to process ${filename}`);
+  console.log(`From console.log: going to process ${filename}`);
 
   const storage = new Storage({
     projectId: 'project_id'
@@ -58,16 +58,11 @@ exports.imagePubSub = (data, context) => {
 
  //  const streamAsPromise = new Promise((resolve,reject) => stream.pipe(pipeline).on('finish', resolve).on('error',reject));
    streamAsPromise.then(() => {
-    console.log('Thumbnail created successfully');
+    console.log('From console.log: Thumbnail created successfully');
     return null;
   });
 
-  console.log('Served (expect full path): ' + file.name);
-
-
-
-
-
+  console.log('From console.log: Served (expect full path): ' + file.name);
 };
 // [END functions_helloworld_pubsub_node8]
 

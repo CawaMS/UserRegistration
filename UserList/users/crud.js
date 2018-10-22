@@ -16,6 +16,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const images = require('../lib/images');
+const winston = require('../config/winston');
 
 function getModel () {
   return require(`./model-${require('../config').get('DATA_BACKEND')}`);
@@ -74,6 +75,16 @@ router.post(
   images.sendUploadToGCS,
   (req, res, next) => {
     let data = req.body;
+
+    var address = data.description.toLowerCase();
+    if(address == "zoo")
+    {
+      winston.log('error', " invalid address provided. Need street address");
+      res.statusCode = 500;
+      console.error(new Error('Whoops, something bad happened'));
+      res.send( { error: "Internal Server Error"} );
+      return;
+    }
 
     // Was an image uploaded? If so, we'll use its public URL
     // in cloud storage.

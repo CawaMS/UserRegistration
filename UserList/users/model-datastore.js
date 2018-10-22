@@ -124,6 +124,10 @@ function update (id, data, cb) {
       cb(err, err ? null : data);
     }
   );
+
+  //DEBUG: show data field
+   console.log("DEBUG: User Data: %j", data);
+
 }
 
 function create (data, cb) {

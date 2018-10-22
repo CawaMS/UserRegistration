@@ -16,6 +16,8 @@
 const path = require('path');
 const express = require('express');
 const config = require('./config');
+var morgan = require('morgan');
+var winston = require('./config/winston');
 
 const app = express();
 
@@ -23,6 +25,8 @@ app.disable('etag');
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 app.set('trust proxy', true);
+
+app.use(morgan('combined', { stream: winston.stream }));
 
 // users
 app.use('/users', require('./users/crud'));
@@ -40,11 +44,16 @@ app.use((req, res) => {
 
 // Basic error handler
 app.use((err, req, res, next) => {
-  /* jshint unused:false */
-  console.error(err);
-  // If our routes specified a specific response, then send that. Otherwise,
-  // send a generic message so as not to leak anything.
-  res.status(500).send(err.response || 'Something broke!');
+  // set locals, only providing error in development
+  res.locals.message = err.message;
+  res.locals.error = req.app.get('env') === 'development' ? err : {};
+
+  // add this line to include winston logging
+  winston.error(`${err.status || 500} - ${err.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`);
+
+  // render the error page
+  res.status(err.status || 500);
+  res.render('error');
 });
 
 if (module === require.main) {
